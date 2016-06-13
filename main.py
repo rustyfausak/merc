@@ -5,10 +5,11 @@ Usage:
 
 """
 from docopt import docopt
-from merc.merc import analyze
+from merc.merc import Merc
 
 with open('VERSION') as f:
     version = f.read().strip()
 
 args = docopt(__doc__, version=version)
-analyze(args['FILE'])
+merc = Merc(args['FILE'])
+merc.analyze()
