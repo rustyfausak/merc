@@ -1,3 +1,7 @@
+### Merc
+
+Analyze JSON from a parsed Rocket League replay.
+
 ## Requirements
 
  - Python 3+
