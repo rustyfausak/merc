@@ -1,0 +1,5 @@
+class CollisionBounds:
+	CAR_RADIUS = 91 # based on a max car size of 130x86x42
+	BALL_RADIUS = 88
+	CAR_AND_BALL_RADIUS = CAR_RADIUS + BALL_RADIUS
+	CAR_AND_CAR_RADIUS = CAR_RADIUS * 2
