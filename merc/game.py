@@ -4,6 +4,7 @@ from pprint import pprint
 import sys
 import numpy
 import itertools
+from PIL import Image, ImageDraw, ImageColor
 
 class Game:
 	def __init__(self, data):
@@ -11,30 +12,62 @@ class Game:
 
 	def processFrames(self):
 		self.actors = {}
+		im = Image.new('RGB', (255, 255))
+		draw = ImageDraw.Draw(im)
+		draw.text((0, 0), "Distance Traveled", "#00ff00")
+		draw.text((100, 240), "Velocity", "#00ff00")
+		draw.line((0, 255) + (255, 0), fill='#bbbbbb')
 		for frame in self.Frames:
 			for id, data in frame['Spawned'].items():
 				self.actors[id] = Actor(data)
 			for id, data in frame['Updated'].items():
 				self.actors[id].update(data)
 			self.link()
+			self.noodle(draw)
 			#self.collisions()
 			#pprint(self.actors)
-			sys.exit()
+		im.save('data.png')
+
+	def noodle(self, draw):
+		cars = {k: v for k, v in self.actors.items() if v.isCar()}.items()
+		colors = ['#ff0000', '#00ff00', '#0000ff', '#ff00ff']
+		colorindex = 0
+		colormap = {}
+		for id, car in cars:
+			if not hasattr(car, 'pri'):
+				continue
+			pri = car.pri
+			player_id = pri.getProp('Engine.PlayerReplicationInfo:PlayerID')
+			if not player_id:
+				continue
+			if car.last_rb:
+				p1 = numpy.array([0, 0, 0])
+				p2 = numpy.array(car.last_rb['LinearVelocity']) / 100 * 0.85
+				velocity = numpy.linalg.norm(p2 - p1)
+				travel = car.getTravel()
+				if pri.getProp not in colormap.keys():
+					colormap[player_id] = colors[colorindex % len(colors)]
+					colorindex += 1
+				color = colormap[player_id]
+				draw.point((velocity, travel * -1 + 255), color)
 
 	def link(self):
 		pris = {k: v for k, v in self.actors.items() if v.isPRI()}.items()
 		for id, pri in pris:
-			if pri.hasProp('team'):
+			if hasattr(pri, 'team'):
 				continue
 			team_prop = pri.getProp('Engine.PlayerReplicationInfo:Team')
+			if not team_prop:
+				continue
 			pri.team = self.findActor(team_prop[1])
-			pprint(vars(pri))
 
 		cars = {k: v for k, v in self.actors.items() if v.isCar()}.items()
 		for id, car in cars:
-			if car.hasProp('pri'):
+			if hasattr(car, 'pri'):
 				continue
 			pri_prop = car.getProp('Engine.Pawn:PlayerReplicationInfo')
+			if not pri_prop:
+				continue
 			car.pri = self.findActor(pri_prop[1])
 
 	def findActor(self, find_actor_id):
