@@ -1,25 +1,28 @@
 import numpy
 
 class Actor:
-	def __init__(self, data):
+	def __init__(self, id, data):
 		self.__dict__ = data
+		self.id = id
 		self.last_rb = None
 
 	def update(self, data):
 		self.last_rb = self.getProp('TAGame.RBActor_TA:ReplicatedRBState')
 		self.__dict__.update(data)
 
-	def isBall(self):
-		return self.Class == 'TAGame.Ball_TA'
+	def getName(self):
+		if self.isClass('TAGame.Car_TA'):
+			if hasattr(self, 'pri'):
+				return self.pri.getProp('Engine.PlayerReplicationInfo:PlayerName', self.Class)
+		return self.Class
 
-	def isCar(self):
-		return self.Class == 'TAGame.Car_TA'
+	def getPlayerId(self):
+		if not hasattr(self, 'pri'):
+			return None
+		return self.pri.getProp('Engine.PlayerReplicationInfo:PlayerID')
 
-	def isPRI(self):
-		return self.Class == 'TAGame.PRI_TA'
-
-	def isCollidable(self):
-		return self.isBall() or self.isCar()
+	def isClass(self, name):
+		return self.Class == name
 
 	def hasProp(self, name):
 		return hasattr(self, name)
