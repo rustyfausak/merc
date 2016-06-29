@@ -3,8 +3,9 @@ class Collision:
 	BALL_RADIUS = 88
 	CAR_AND_BALL_RADIUS = CAR_RADIUS + BALL_RADIUS
 	CAR_AND_CAR_RADIUS = CAR_RADIUS * 2
-	MIN_FRAMES_BETWEEN = 8
+	MIN_FRAMES_BETWEEN = 5
 	FRAME_CHECK_RADIUS = 300
+	TOLERANCE = 20
 
 	def __init__(self, point, frame_number, id_actor1, id_actor2):
 		self.point = point

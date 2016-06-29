@@ -4,9 +4,8 @@ class Player:
 		self.name = ''
 		self.collisions = []
 
-	def update(self, car):
-		# todo
-		self.name = car.getName()
+	def update(self, car_actor):
+		self.name = car_actor.getName()
 
 	def addCollision(self, collision):
 		self.collisions.append(collision)

@@ -10,4 +10,3 @@ class Merc:
 			data = json.loads(fstream.read())
 		game = Game(data)
 		game.processFrames()
-		print("Done analyzing")
