@@ -38,7 +38,7 @@ class Game:
 				self.actors[id].update(data, self.frame['Number'])
 			self.updateState()
 			self.linkActors()
-			self.checkCollisions()
+			#self.checkCollisions()
 
 	def updateState(self):
 		"""
@@ -49,12 +49,15 @@ class Game:
 		for actor in self.actors.values():
 			actor_class = actor.getClass()
 			if actor_class == 'TAGame.GameEvent_Soccar_TA':
+				# shortcut for the time remaining
 				s = actor.getProp('TAGame.GameEvent_Soccar_TA:SecondsRemaining', -1)
 				if s >= 0:
 					self.seconds_remaining = s
 			elif actor_class == 'TAGame.Ball_TA':
+				# shortcut to find the ball actor
 				self.ball_actor = actor
 			else:
+				# group similar actors together
 				if not actor_class in self.grouped_actors:
 					self.grouped_actors[actor_class] = []
 				self.grouped_actors[actor_class].append(actor)
@@ -63,6 +66,11 @@ class Game:
 		"""
 		Some actors have relationships with each other, so we set those relationships here.
 		"""
+
+		'''
+		components -> car -> pri -> team
+		'''
+
 		# link pri -> team
 		if 'TAGame.PRI_TA' in self.grouped_actors:
 			for pri_actor in self.grouped_actors['TAGame.PRI_TA']:
@@ -72,6 +80,24 @@ class Game:
 				if not team_prop:
 					continue
 				pri_actor.team = self.findActor(team_prop[1])
+
+		# link components to car
+		components = [
+			'TAGame.CarComponent_Boost_TA',
+			'TAGame.CarComponent_Jump_TA',
+			'TAGame.CarComponent_DoubleJump_TA',
+			'TAGame.CarComponent_Dodge_TA',
+			'TAGame.CarComponent_FlipCar_TA',
+		]
+		for component in components:
+			if component in self.grouped_actors:
+				for component_actor in self.grouped_actors[component]:
+					if hasattr(component_actor, 'car'):
+						continue
+					car_prop = component_actor.getProp('TAGame.CarComponent_TA:Vehicle')
+					if not car_prop:
+						continue
+					component_actor.car = self.findActor(car_prop[1])
 
 		if 'TAGame.Car_TA' in self.grouped_actors:
 			# link car -> pri
