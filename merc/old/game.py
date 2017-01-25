@@ -98,6 +98,10 @@ class Game:
 					if not car_prop:
 						continue
 					component_actor.car = self.findActor(car_prop[1])
+					if not component_actor.car:
+						continue
+					if not hasattr(component_actor.car, 'components'):
+						component_actor.car.components = []
 
 		if 'TAGame.Car_TA' in self.grouped_actors:
 			# link car -> pri

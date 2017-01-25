@@ -1,0 +1,8 @@
+lv_x_dist.png
+
+why are there 4 lines.. dist traveled should be linear_velocity * time. that doesnt quite work.
+so i tried linear_velocity * ticks, which groups the lines pretty well. but each number of ticks
+still has 4 lines associated with it. so in the graph, blue means 1 tick passed, green 2, red 3..
+but there are still 4 "lines" for each of blue, green, red..
+
+i cant accurately tween unless i can more accurately predict where someone/the ball will be..

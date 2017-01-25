@@ -1,4 +1,10 @@
 import numpy
-p1 = numpy.array([5,6,7])
-p2 = numpy.array([10,10,10])
-print(numpy.add(p1, p2))
+from pprint import pprint
+from merc.box import Box
+
+b = Box(10, 5, 2)
+#b.translate([1,1,1])
+b.rotate([0.3,0,0])
+p = b.pointClosestToPoint([10, 10, 10])
+pprint(vars(b))
+pprint(p)
